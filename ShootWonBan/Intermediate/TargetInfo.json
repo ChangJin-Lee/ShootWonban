@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "ShootWonBan",
+			"Path": "..\\Source\\ShootWonBan.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "ShootWonBanEditor",
+			"Path": "..\\Source\\ShootWonBanEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

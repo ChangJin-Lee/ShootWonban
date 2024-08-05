@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\ShootWonBan.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\ShootWonBan.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\ShootWonBanEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\ShootWonBan">
+      <UniqueIdentifier>{FF4C64BA-D2CD-302C-84CC-B7FD5511285C}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\ShootWonBan\ShootWonBan.Build.cs">
+      <Filter>Source\ShootWonBan</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\ShootWonBan\ShootWonBan.cpp">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ShootWonBan\ShootWonBan.h">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ShootWonBan\ShootWonBanCharacter.cpp">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ShootWonBan\ShootWonBanCharacter.h">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ShootWonBan\ShootWonBanGameMode.cpp">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ShootWonBan\ShootWonBanGameMode.h">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ShootWonBan\ShootWonBanPlayerController.cpp">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ShootWonBan\ShootWonBanPlayerController.h">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ShootWonBan\ShootWonBanProjectile.cpp">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ShootWonBan\ShootWonBanProjectile.h">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ShootWonBan\TP_PickUpComponent.cpp">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ShootWonBan\TP_PickUpComponent.h">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ShootWonBan\TP_WeaponComponent.cpp">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ShootWonBan\TP_WeaponComponent.h">
+      <Filter>Source\ShootWonBan</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

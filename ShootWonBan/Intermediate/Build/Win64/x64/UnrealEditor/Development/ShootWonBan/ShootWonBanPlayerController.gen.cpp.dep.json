@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\unrealeditor\\inc\\shootwonban\\uht\\shootwonbanplayercontroller.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\x64\\shootwonbaneditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shootwonban\\definitions.shootwonban.h",
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\source\\shootwonban\\shootwonbanplayercontroller.h",
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\unrealeditor\\inc\\shootwonban\\uht\\shootwonbanplayercontroller.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -1,0 +1,8 @@
+{
+	"SourceFiles": [
+		"D:\\Develop\\Unreal\\Projects\\Unreal_Practice\\Unreal_Practice\\ShootWonban\\ShootWonBan\\Source\\ShootWonBan\\ShootWonBan.Build.cs",
+		"D:\\Develop\\Unreal\\Projects\\Unreal_Practice\\Unreal_Practice\\ShootWonban\\ShootWonBan\\Source\\ShootWonBan.Target.cs",
+		"D:\\Develop\\Unreal\\Projects\\Unreal_Practice\\Unreal_Practice\\ShootWonban\\ShootWonBan\\Source\\ShootWonBanEditor.Target.cs"
+	],
+	"EngineVersion": "5.4.3"
+}

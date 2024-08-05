@@ -1,0 +1,29 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\unrealeditor\\inc\\shootwonban\\uht\\tp_pickupcomponent.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\x64\\shootwonbaneditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shootwonban\\definitions.shootwonban.h",
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\source\\shootwonban\\tp_pickupcomponent.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\components\\spherecomponent.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\components\\shapecomponent.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\shapecomponent.generated.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\spherecomponent.generated.h",
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\source\\shootwonban\\shootwonbancharacter.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\gameframework\\character.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\gameframework\\charactermovementreplication.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\experimental\\iris\\core\\public\\iris\\serialization\\irisobjectreferencepackagemap.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\iriscore\\uht\\irisobjectreferencepackagemap.generated.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\charactermovementreplication.generated.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\source\\runtime\\engine\\classes\\gameframework\\rootmotionsource.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\rootmotionsource.generated.h",
+            "c:\\program files\\epic games\\ue_5.4\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\character.generated.h",
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\unrealeditor\\inc\\shootwonban\\uht\\shootwonbancharacter.generated.h",
+            "d:\\develop\\unreal\\projects\\unreal_practice\\unreal_practice\\shootwonban\\shootwonban\\intermediate\\build\\win64\\unrealeditor\\inc\\shootwonban\\uht\\tp_pickupcomponent.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
