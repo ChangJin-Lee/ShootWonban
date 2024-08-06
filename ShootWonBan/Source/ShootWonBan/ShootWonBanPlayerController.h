@@ -7,7 +7,6 @@
 #include "ShootWonBanPlayerController.generated.h"
 
 class UInputMappingContext;
-
 /**
  *
  */
@@ -28,4 +27,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	// End Actor interface
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+	
+	UPROPERTY()
+	UUserWidget* HUDWidget;
 };
