@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "ShootWonBanCharacter.generated.h"
@@ -13,6 +15,7 @@ class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
+class UCurveFloat;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -20,7 +23,7 @@ UCLASS(config=Game)
 class AShootWonBanCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+		
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* Mesh1P;
@@ -37,11 +40,28 @@ class AShootWonBanCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 	
+	/** Aim Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* AimAction;
+
+
+	float DefaultFOV;
+
+	UPROPERTY(EditAnywhere, Category = Aim, meta = (AllowPrivateAccess = "true"))
+	float ZoomedFOV = 80.f;
+	
+	UPROPERTY(EditAnywhere, Category = Aim, meta = (AllowPrivateAccess = "true"))
+	UCurveFloat* AimCurve = nullptr;
+	
+	FTimeline AimTimeline;
+	
+
 public:
 	AShootWonBanCharacter();
 
 protected:
 	virtual void BeginPlay();
+	virtual void Tick(float DeltaTime) override;
 
 public:
 		
@@ -56,6 +76,12 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+	void Aim();
+	void CancelAim();
+
+	UFUNCTION()
+	void UpdateZoom(float Value);
+	
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -66,6 +92,5 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
 };
 

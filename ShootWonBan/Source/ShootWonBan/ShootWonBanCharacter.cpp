@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Components/TimelineComponent.h"
 #include "Engine/LocalPlayer.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -33,15 +34,29 @@ AShootWonBanCharacter::AShootWonBanCharacter()
 	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
-	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
+	// Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
-
 }
 
 void AShootWonBanCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	// set Default FOV
+	DefaultFOV = FirstPersonCameraComponent->FieldOfView;
+
+	FOnTimelineFloat OnTimelineFloat;
+	OnTimelineFloat.BindUFunction(this, FName("UpdateZoom"));
+	AimTimeline.AddInterpFloat(AimCurve, OnTimelineFloat);
+
+}
+
+void AShootWonBanCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+	AimTimeline.TickTimeline(DeltaTime);
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -60,6 +75,10 @@ void AShootWonBanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootWonBanCharacter::Look);
+
+		// Aiming
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShootWonBanCharacter::Aim);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootWonBanCharacter::CancelAim);
 	}
 	else
 	{
@@ -93,3 +112,24 @@ void AShootWonBanCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+
+void AShootWonBanCharacter::Aim()
+{
+	UE_LOG(LogTemp, Display, TEXT("Aim!"));
+	AimTimeline.Play();	
+}
+
+void AShootWonBanCharacter::CancelAim()
+{
+	UE_LOG(LogTemp, Display, TEXT("Cancel Aim!"));
+	AimTimeline.Reverse();
+}
+
+void AShootWonBanCharacter::UpdateZoom(float Value)
+{
+	UE_LOG(LogTemp, Display, TEXT("Zoom!"));
+	float TargetFOV = FMath::Lerp(DefaultFOV, ZoomedFOV, Value);
+	FirstPersonCameraComponent->SetFieldOfView(TargetFOV);
+}
+
+
