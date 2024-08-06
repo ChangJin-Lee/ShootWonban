@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../../../../../EpicGames/UE_5.4/Engine/Source/Runtime/Engine/Classes/Engine/StaticMesh.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Actor.h"
 #include "Wonban.generated.h"
 
@@ -27,7 +28,32 @@ public:
 	UPROPERTY(EditAnywhere, Category="Wonban")
 	UStaticMeshComponent* WonbanMeshComponent;
 
+	void InitializeThrow(UCurveFloat* Curve);
+
+	// wonban 특성
+	float RotationFrequency;
+	float RotationPower;
+	float ParabolaHeight;
+	FVector ThrowDirection;
+	FVector TargetLocation;
+	
 private:
+	FVector InitialLocation;
 	FVector MovementDirection;
-	float MovementSpeed;
+	
+	FTimeline ThrowTimeline;
+
+	UFUNCTION()
+	void HandleThrowProgress(float Value);
+
+	UFUNCTION()
+	void OnThrowTimelinFinished();
+
+	UFUNCTION()
+	void OnCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+	
+	void SetupThrowTimeline(UCurveFloat* Curve);
+
+	void SpawnBrokenPieces();
 };
