@@ -11,14 +11,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "Animation/AnimInstance.h"
 #include "Engine/LocalPlayer.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "Engine/World.h"
 
-// Sets default values for this component's properties
-UTP_WeaponComponent::UTP_WeaponComponent()
-{
-	// Default offset from the character location for projectiles to spawn
-	MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
-}
 
 
 void UTP_WeaponComponent::Fire()
@@ -27,24 +22,34 @@ void UTP_WeaponComponent::Fire()
 	{
 		return;
 	}
-
+	
+	GetMuzzleLocation(MuzzleLocation);
+	
 	// Try and fire a projectile
 	if (ProjectileClass != nullptr)
 	{
 		UWorld* const World = GetWorld();
 		if (World != nullptr)
 		{
+			FVector CrosshairWorldLocation;
+			FVector CrosshairDirection;
+			
 			APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
-			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
-	
-			//Set Spawn Collision Handling Override
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-	
-			// Spawn the projectile at the muzzle
-			World->SpawnActor<AShootWonBanProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+
+			if(GetCrossHairLocation(PlayerController, CrosshairWorldLocation, CrosshairDirection))
+			{
+				FVector EndTrace = CrosshairWorldLocation + (CrosshairDirection * WeaponRange);
+
+				FVector FireDirection = (EndTrace - MuzzleLocation).GetSafeNormal();
+				FRotator ProjectileRotation = FireDirection.Rotation();
+				
+				//Set Spawn Collision Handling Override
+				FActorSpawnParameters ActorSpawnParams;
+				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+		
+				// Spawn the projectile at the muzzle
+				World->SpawnActor<AShootWonBanProjectile>(ProjectileClass, MuzzleLocation, ProjectileRotation, ActorSpawnParams);
+			}
 		}
 	}
 	
@@ -98,7 +103,7 @@ bool UTP_WeaponComponent::AttachWeapon(AShootWonBanCharacter* TargetCharacter)
 			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UTP_WeaponComponent::Fire);
 		}
 	}
-
+	
 	return true;
 }
 
@@ -117,3 +122,30 @@ void UTP_WeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 	}
 }
+
+// 총의 Muzzle 위치를 가져온다
+void UTP_WeaponComponent::GetMuzzleLocation(FVector& OutMuzzleLocation )
+{
+	const USkeletalMesh* MySkeletalMesh = GetSkeletalMeshAsset();
+
+	if(MySkeletalMesh)
+	{
+		if(MySkeletalMesh->FindSocket(TEXT("Muzzle")))
+		{
+			OutMuzzleLocation =	GetSocketLocation(TEXT("Muzzle"));
+		}
+	}
+}
+
+// 화면의 중앙의 월드 좌표와 방향을 가져온다 
+bool UTP_WeaponComponent::GetCrossHairLocation(APlayerController* MyPlayerController, FVector& WorldLocation, FVector& WorldDirection) const
+{	
+	if(MyPlayerController != nullptr)
+	{
+		FVector2D Viewport;
+		GetWorld()->GetGameViewport()->GetViewportSize(Viewport);
+		return MyPlayerController->DeprojectScreenPositionToWorld(Viewport.X * 0.5f, Viewport.Y * 0.5f, WorldLocation, WorldDirection);
+	}
+	return false;
+}
+

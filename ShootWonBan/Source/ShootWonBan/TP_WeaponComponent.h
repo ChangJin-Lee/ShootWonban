@@ -14,6 +14,7 @@ class SHOOTWONBAN_API UTP_WeaponComponent : public USkeletalMeshComponent
 	GENERATED_BODY()
 
 public:
+	
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class AShootWonBanProjectile> ProjectileClass;
@@ -30,6 +31,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	FVector MuzzleOffset;
 
+	// Muzzle
+	FVector MuzzleLocation;
+	FRotator MuzzleRotation;
+	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputMappingContext* FireMappingContext;
@@ -37,9 +42,6 @@ public:
 	/** Fire Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* FireAction;
-
-	/** Sets default values for this component's properties */
-	UTP_WeaponComponent();
 
 	/** Attaches the actor to a FirstPersonCharacter */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
@@ -57,4 +59,10 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	AShootWonBanCharacter* Character;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Aim, meta=(AllowPrivateAccess = "true"))
+	float WeaponRange = 1000.f;
+
+	void GetMuzzleLocation(FVector& OutMuzzleLocation);
+	bool GetCrossHairLocation(APlayerController* MyPlayerController, FVector& WorldLocation, FVector& WorldDirection) const;
 };
