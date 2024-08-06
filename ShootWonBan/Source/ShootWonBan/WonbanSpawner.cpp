@@ -33,7 +33,13 @@ void AWonbanSpawner::SpawnWonban()
 
 	if(SpawnedWonban)
 	{
-		SpawnedWonban->SetActorScale3D(FVector(0.5f, 0.5f, 0.5f));
+		SpawnedWonban->SetActorScale3D(FVector(0.5f, 0.5f, 0.1f));
+		SpawnedWonban->RotationFrequency = FMath::RandRange(15.0f, 25.0f);
+		SpawnedWonban->RotationPower = FMath::RandRange(3.0f, 5.0f);
+		SpawnedWonban->ParabolaHeight = FMath::RandRange(200.0f, 250.0f);
+		SpawnedWonban->ThrowDirection = FVector(FMath::RandRange(0.0f, 1.0f),FMath::RandRange(0.0f, 1.0f),0.0f).GetSafeNormal();
+		SpawnedWonban->TargetLocation = SpawnedWonban->ThrowDirection * FMath::RandRange(500.0f, 1000.0f);
+		SpawnedWonban->InitializeThrow(ThrowCurve);
 	}
 }
 

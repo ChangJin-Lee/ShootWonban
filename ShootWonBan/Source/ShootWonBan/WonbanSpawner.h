@@ -29,6 +29,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	FRotator SpawnRotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	UCurveFloat* ThrowCurve;
 	
 private:
 	FTimerHandle TimerHandle;
