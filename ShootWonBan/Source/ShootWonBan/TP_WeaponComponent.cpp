@@ -14,13 +14,40 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Engine/World.h"
 
+void UTP_WeaponComponent::BeginPlay()
+{
+	Super::BeginPlay();
 
+	// 총알 수를 가져와서 할당
+	SetWeaponAmmo(10);
+}
+
+
+
+void UTP_WeaponComponent::SetWeaponAmmo(int32 value)
+{
+	AmmoCount = value;
+}
+
+int32 UTP_WeaponComponent::GetWeaponAmmo()
+{
+	return AmmoCount;
+}
 
 void UTP_WeaponComponent::Fire()
 {
+
 	if (Character == nullptr || Character->GetController() == nullptr)
 	{
 		return;
+	}
+
+	if(AmmoCount < 1)
+	{
+		// play empty ammo sound
+		PlaySound(EmptyAmmoSound);
+		PlayAnimation(FireAnimation, 1.f);
+		return; 
 	}
 	
 	GetMuzzleLocation(MuzzleLocation);
@@ -52,45 +79,38 @@ void UTP_WeaponComponent::Fire()
 			}
 		}
 	}
-	
-	// Try and play the sound if specified
-	if (FireSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, Character->GetActorLocation());
-	}
-	
-	// Try and play a firing animation if specified
-	if (FireAnimation != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Character->GetMesh1P()->GetAnimInstance();
-		if (AnimInstance != nullptr)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
-	}
+
+	AmmoCount--;
+
+	// play fire sound 
+	PlaySound(FireSound);
+
+	// play animation
+	PlayAnimation(FireAnimation, 1.f);
 }
 
 bool UTP_WeaponComponent::AttachWeapon(AShootWonBanCharacter* TargetCharacter)
 {
 	Character = TargetCharacter;
-
+	
 	// Check that the character is valid, and has no weapon component yet
 	if (Character == nullptr || Character->GetInstanceComponents().FindItemByClass<UTP_WeaponComponent>())
 	{
 		return false;
 	}
-
+	
+	
 	// Attach the weapon to the First Person Character
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
 	AttachToComponent(Character->GetMesh1P(), AttachmentRules, FName(TEXT("GripPoint")));
 
 	// add the weapon as an instance component to the character
 	Character->AddInstanceComponent(this);
-
+	
 	// Set up action bindings
 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
 	{
+		
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			// Set the priority of the mapping to 1, so that it overrides the Jump action with the Fire action when using touch input
@@ -119,6 +139,27 @@ void UTP_WeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->RemoveMappingContext(FireMappingContext);
+		}
+	}
+}
+
+
+void UTP_WeaponComponent::PlaySound(USoundBase* SetSoundBase)
+{
+	if(SetSoundBase != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, SetSoundBase, Character->GetActorLocation());
+	}
+}
+
+void UTP_WeaponComponent::PlayAnimation(UAnimMontage* SetAnimation, float PlayRate)
+{
+	if (SetAnimation != nullptr)
+	{
+		UAnimInstance* AnimInstance = Character->GetMesh1P()->GetAnimInstance();
+		if (AnimInstance != nullptr)
+		{
+			AnimInstance->Montage_Play(SetAnimation, PlayRate);
 		}
 	}
 }

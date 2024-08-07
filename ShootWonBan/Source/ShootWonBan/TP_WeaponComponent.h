@@ -13,6 +13,9 @@ class SHOOTWONBAN_API UTP_WeaponComponent : public USkeletalMeshComponent
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void BeginPlay();
+	
 public:
 	
 	/** Projectile class to spawn */
@@ -22,6 +25,10 @@ public:
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	USoundBase* FireSound;
+
+	// 총알이 없을 때 사운드
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
+	USoundBase* EmptyAmmoSound;
 	
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -30,10 +37,6 @@ public:
 	/** Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	FVector MuzzleOffset;
-
-	// Muzzle
-	FVector MuzzleLocation;
-	FRotator MuzzleRotation;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -51,6 +54,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
 
+	void SetWeaponAmmo(int32 value);
+	int32 GetWeaponAmmo();
+	
 protected:
 	/** Ends gameplay for this component. */
 	UFUNCTION()
@@ -63,6 +69,17 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Aim, meta=(AllowPrivateAccess = "true"))
 	float WeaponRange = 1000.f;
 
+	// Muzzle
+	FVector MuzzleLocation;
+	FRotator MuzzleRotation;
+
+	// Ammo Count 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Ammo, meta=(AllowPrivateAccess = "true"))
+	int32 AmmoCount = 0; 
+
+	void PlaySound(USoundBase* SetSoundBase);
+	void PlayAnimation(UAnimMontage* SetAnimation, float PlayRate);
+	
 	void GetMuzzleLocation(FVector& OutMuzzleLocation);
 	bool GetCrossHairLocation(APlayerController* MyPlayerController, FVector& WorldLocation, FVector& WorldDirection) const;
 };
