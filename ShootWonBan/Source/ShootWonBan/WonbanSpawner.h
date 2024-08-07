@@ -33,6 +33,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	UCurveFloat* ThrowCurve;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	float WonbanScale = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	float WonbanRotationFrequency = 20.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	float WonbanRotationPower = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	float WonbanParabolaHeight = 250.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	FVector WonbanThrowDirectionX = FVector(-1.0f, 1.0f, 0);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	FVector WonbanThrowDirectionY = FVector(-1.0f, 1.0f, 0);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	float WonbanTargetLocationDistance = 1000.0f;
+	
+	
 private:
 	FTimerHandle TimerHandle;
 
