@@ -60,7 +60,7 @@ public:
 	AShootWonBanCharacter();
 
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 public:
@@ -68,7 +68,7 @@ public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
-
+	
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

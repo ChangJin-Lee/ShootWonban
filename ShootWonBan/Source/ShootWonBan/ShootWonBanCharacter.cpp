@@ -115,19 +115,16 @@ void AShootWonBanCharacter::Look(const FInputActionValue& Value)
 
 void AShootWonBanCharacter::Aim()
 {
-	UE_LOG(LogTemp, Display, TEXT("Aim!"));
 	AimTimeline.Play();	
 }
 
 void AShootWonBanCharacter::CancelAim()
 {
-	UE_LOG(LogTemp, Display, TEXT("Cancel Aim!"));
 	AimTimeline.Reverse();
 }
 
 void AShootWonBanCharacter::UpdateZoom(float Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("Zoom!"));
 	float TargetFOV = FMath::Lerp(DefaultFOV, ZoomedFOV, Value);
 	FirstPersonCameraComponent->SetFieldOfView(TargetFOV);
 }
