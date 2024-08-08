@@ -33,5 +33,6 @@ public:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Menu")
-	UWidgetComponent* WidgetComponent;
+	UWidgetComponent* MainWidgetComponent;
+	
 };

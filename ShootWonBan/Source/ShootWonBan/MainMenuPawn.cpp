@@ -16,8 +16,8 @@ AMainMenuPawn::AMainMenuPawn()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(RootComponent);
 
-	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	WidgetComponent->SetupAttachment(RootComponent);
+	MainWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	MainWidgetComponent->SetupAttachment(RootComponent);
 
 	CameraComponent->SetRelativeLocation(FVector(-240.0f, 0,0));
 }
@@ -27,7 +27,7 @@ void AMainMenuPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UUserWidget* Widget =  Cast<UUserWidget>(WidgetComponent->GetWidget());
+	UUserWidget* Widget =  Cast<UUserWidget>(MainWidgetComponent->GetWidget());
 	
 	if(Widget)
 	{
