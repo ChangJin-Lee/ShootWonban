@@ -9,8 +9,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "ShootWonBanPlayerController.h"
 #include "Components/TimelineComponent.h"
 #include "Engine/LocalPlayer.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -49,6 +51,19 @@ void AShootWonBanCharacter::BeginPlay()
 	FOnTimelineFloat OnTimelineFloat;
 	OnTimelineFloat.BindUFunction(this, FName("UpdateZoom"));
 	AimTimeline.AddInterpFloat(AimCurve, OnTimelineFloat);
+
+
+	APlayerController* PlayerController =  UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	if(PlayerController)
+	{
+		AShootWonBanPlayerController* ShootWonBanPlayerController = Cast<AShootWonBanPlayerController>(PlayerController);
+		if(ShootWonBanPlayerController)
+		{
+			ShootWonBanPlayerController->SaveHighScore(8);
+			ShootWonBanPlayerController->SetCurrentStageWonbanCount();
+		}
+	}
 
 }
 
