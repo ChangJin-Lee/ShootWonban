@@ -1,18 +1,21 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ShootWonBanCharacter.h"
-#include "ShootWonBanProjectile.h"
+
+#include "BaseWeapon.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FirstPersonAnimInstance.h"
 #include "InputActionValue.h"
 #include "ShootWonBanPlayerController.h"
 #include "Components/TimelineComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
+#include "FirstPersonAnimInstance.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -23,7 +26,7 @@ AShootWonBanCharacter::AShootWonBanCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -44,33 +47,40 @@ void AShootWonBanCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
+	
 	// set Default FOV
 	DefaultFOV = FirstPersonCameraComponent->FieldOfView;
 
-	FOnTimelineFloat OnTimelineFloat;
-	OnTimelineFloat.BindUFunction(this, FName("UpdateZoom"));
-	AimTimeline.AddInterpFloat(AimCurve, OnTimelineFloat);
-
-
-	APlayerController* PlayerController =  UGameplayStatics::GetPlayerController(GetWorld(), 0);
-
-	if(PlayerController)
+	if(AimCurve)
 	{
-		AShootWonBanPlayerController* ShootWonBanPlayerController = Cast<AShootWonBanPlayerController>(PlayerController);
-		if(ShootWonBanPlayerController)
+		FOnTimelineFloat OnTimelineFloat;
+		OnTimelineFloat.BindUFunction(this, FName("UpdateZoom"));
+		AimTimeline.AddInterpFloat(AimCurve, OnTimelineFloat);
+		AimTimeline.SetLooping(false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Aim Curve!"));
+	}
+	
+	bHasWeapon = false;
+	
+	if(APlayerController* PlayerController =  UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		if(AShootWonBanPlayerController* ShootWonBanPlayerController = Cast<AShootWonBanPlayerController>(PlayerController))
 		{
 			ShootWonBanPlayerController->SaveHighScore(8);
 			ShootWonBanPlayerController->SetCurrentStageWonbanCount();
 		}
 	}
 
+	AmmoCount = 99;
 }
 
 void AShootWonBanCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	AimTimeline.TickTimeline(DeltaTime);
 }
 
@@ -91,16 +101,21 @@ void AShootWonBanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootWonBanCharacter::Look);
 
+		// Fire
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootWonBanCharacter::FireWeapon);
+
 		// Aiming
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShootWonBanCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootWonBanCharacter::CancelAim);
+
+		EnhancedInputComponent->BindAction(SwitchWeaponAction1, ETriggerEvent::Started, this, &AShootWonBanCharacter::SwitchWeapon1);
+		EnhancedInputComponent->BindAction(SwitchWeaponAction2, ETriggerEvent::Started, this, &AShootWonBanCharacter::SwitchWeapon2);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
-
 
 void AShootWonBanCharacter::Move(const FInputActionValue& Value)
 {
@@ -130,18 +145,110 @@ void AShootWonBanCharacter::Look(const FInputActionValue& Value)
 
 void AShootWonBanCharacter::Aim()
 {
-	AimTimeline.Play();	
+	AimTimeline.Play();
+	
+	if (AimTimeline.IsPlaying())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Aim started"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AimTimeline not started"));
+	}
+	
 }
 
 void AShootWonBanCharacter::CancelAim()
 {
 	AimTimeline.Reverse();
+	
+	if (AimTimeline.IsPlaying())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("cancel aim started"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AimTimeline not started"));
+	}
 }
 
 void AShootWonBanCharacter::UpdateZoom(float Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UpdateZoom called with Value: %f"), Value);
+
+	
 	float TargetFOV = FMath::Lerp(DefaultFOV, ZoomedFOV, Value);
 	FirstPersonCameraComponent->SetFieldOfView(TargetFOV);
+	UE_LOG(LogTemp, Warning, TEXT("UpdateZoom called: Value = %f, DefaultFOV = %f, ZoomedFOV = %f, TargetFOV = %f"), 
+	Value, DefaultFOV, ZoomedFOV, TargetFOV);
+}
+
+void AShootWonBanCharacter::FireWeapon()
+{
+	if(CurrentWeapon == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No current weapon!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Fire!"));
+	CurrentWeapon->Fire(AmmoCount);
+}
+
+void AShootWonBanCharacter::SwitchWeapon1()
+{
+	if(CurrentWeapon == nullptr)
+	{
+		return;
+	}
+	
+	Weapons[WeaponIndex]->SetActorHiddenInGame(true);
+
+	int32 WeaponsCount = Weapons.Num();
+	WeaponIndex = (WeaponIndex + 1) % WeaponsCount; 
+
+	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
+	CurrentWeapon = Weapons[WeaponIndex];
+}
+
+void AShootWonBanCharacter::SwitchWeapon2()
+{
+	if(CurrentWeapon == nullptr)
+	{
+		return;
+	}
+	
+	Weapons[WeaponIndex]->SetActorHiddenInGame(true);
+
+	int32 WeaponsCount = Weapons.Num();
+	WeaponIndex = (WeaponIndex - 1 + WeaponsCount) % WeaponsCount; 
+
+	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
+	CurrentWeapon = Weapons[WeaponIndex];
 }
 
 
+void AShootWonBanCharacter::PickUpWeapon(ABaseWeapon* Weapon)
+{
+	if(Weapon)
+	{
+		Weapons.Add(Weapon);
+		
+		if(bHasWeapon)
+		{
+			Weapon->SetActorHiddenInGame(true);
+		}
+		else
+		{
+			bHasWeapon = true;
+			WeaponIndex = 0;
+			CurrentWeapon = Weapon;
+
+			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+			if(UFirstPersonAnimInstance* FirstPersonAnimInstance = Cast<UFirstPersonAnimInstance>(AnimInstance))
+			{
+				FirstPersonAnimInstance->HasRifle = true;
+			}
+		}
+	}
+}
