@@ -34,4 +34,22 @@ private:
 	
 	UPROPERTY()
 	UUserWidget* HUDWidget;
+
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 CurrentScore;
+	
+	UPROPERTY(BlueprintReadWrite)
+	int32 StageClearScore;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentStageWonbanCount();
+	
+	UFUNCTION(BlueprintCallable)
+	void SaveHighScore(int32 Score);
+	
+	UFUNCTION(BlueprintCallable)
+	int32 LoadHighScore();
 };
