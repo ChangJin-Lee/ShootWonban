@@ -2,13 +2,9 @@
 
 
 #include "TP_WeaponComponent.h"
-#include "ShootWonBanCharacter.h"
 #include "ShootWonBanProjectile.h"
 #include "GameFramework/PlayerController.h"
 #include "Camera/PlayerCameraManager.h"
-#include "Kismet/GameplayStatics.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "Animation/AnimInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -17,54 +13,24 @@
 void UTP_WeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// 총알 수를 가져와서 할당
-	SetWeaponAmmo(10);
+	
 }
 
-
-
-void UTP_WeaponComponent::SetWeaponAmmo(int32 value)
-{
-	AmmoCount = value;
-}
-
-int32 UTP_WeaponComponent::GetWeaponAmmo()
-{
-	return AmmoCount;
-}
 
 void UTP_WeaponComponent::Fire()
 {
-
-	if (Character == nullptr || Character->GetController() == nullptr)
-	{
-		return;
-	}
-
-	if(AmmoCount < 1)
-	{
-		// play empty ammo sound
-		PlaySound(EmptyAmmoSound);
-		PlayAnimation(FireAnimation, 1.f);
-		return; 
-	}
-	
-	GetMuzzleLocation(MuzzleLocation);
-	
 	// Try and fire a projectile
 	if (ProjectileClass != nullptr)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Fire!"));
+		GetMuzzleLocation();
+		
 		UWorld* const World = GetWorld();
-		if (World != nullptr)
+		
+		if (World != nullptr && OwnerController != nullptr)
 		{
-			FVector CrosshairWorldLocation;
-			FVector CrosshairDirection;
-			
-			APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
-
-			if(GetCrossHairLocation(PlayerController, CrosshairWorldLocation, CrosshairDirection))
-			{
+			if(GetCrossHairLocation(OwnerController, CrosshairWorldLocation, CrosshairDirection))
+			{	
 				FVector EndTrace = CrosshairWorldLocation + (CrosshairDirection * WeaponRange);
 
 				FVector FireDirection = (EndTrace - MuzzleLocation).GetSafeNormal();
@@ -76,117 +42,58 @@ void UTP_WeaponComponent::Fire()
 		
 				// Spawn the projectile at the muzzle
 				World->SpawnActor<AShootWonBanProjectile>(ProjectileClass, MuzzleLocation, ProjectileRotation, ActorSpawnParams);
+
+				UE_LOG(LogTemp, Error, TEXT("Muzzle Location: %s"), *MuzzleLocation.ToString());
 			}
 		}
-	}
-
-	AmmoCount--;
-
-	// play fire sound 
-	PlaySound(FireSound);
-
-	// play animation
-	PlayAnimation(FireAnimation, 1.f);
-}
-
-bool UTP_WeaponComponent::AttachWeapon(AShootWonBanCharacter* TargetCharacter)
-{
-	Character = TargetCharacter;
-	
-	// Check that the character is valid, and has no weapon component yet
-	if (Character == nullptr || Character->GetInstanceComponents().FindItemByClass<UTP_WeaponComponent>())
-	{
-		return false;
-	}
-	
-	
-	// Attach the weapon to the First Person Character
-	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-	AttachToComponent(Character->GetMesh1P(), AttachmentRules, FName(TEXT("GripPoint")));
-
-	// add the weapon as an instance component to the character
-	Character->AddInstanceComponent(this);
-	
-	// Set up action bindings
-	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
-	{
-		
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		else
 		{
-			// Set the priority of the mapping to 1, so that it overrides the Jump action with the Fire action when using touch input
-			Subsystem->AddMappingContext(FireMappingContext, 1);
-		}
-
-		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
-		{
-			// Fire
-			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UTP_WeaponComponent::Fire);
+			UE_LOG(LogTemp, Error, TEXT("No Controller !"));
 		}
 	}
-	
-	return true;
-}
-
-void UTP_WeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	if (Character == nullptr)
+	else
 	{
-		return;
-	}
-
-	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->RemoveMappingContext(FireMappingContext);
-		}
+		UE_LOG(LogTemp, Error, TEXT("No projectile!"));
 	}
 }
 
-
-void UTP_WeaponComponent::PlaySound(USoundBase* SetSoundBase)
+void UTP_WeaponComponent::GetMuzzleLocation()
 {
-	if(SetSoundBase != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, SetSoundBase, Character->GetActorLocation());
-	}
-}
-
-void UTP_WeaponComponent::PlayAnimation(UAnimMontage* SetAnimation, float PlayRate)
-{
-	if (SetAnimation != nullptr)
-	{
-		UAnimInstance* AnimInstance = Character->GetMesh1P()->GetAnimInstance();
-		if (AnimInstance != nullptr)
-		{
-			AnimInstance->Montage_Play(SetAnimation, PlayRate);
-		}
-	}
-}
-
-// 총의 Muzzle 위치를 가져온다
-void UTP_WeaponComponent::GetMuzzleLocation(FVector& OutMuzzleLocation )
-{
-	const USkeletalMesh* MySkeletalMesh = GetSkeletalMeshAsset();
-
-	if(MySkeletalMesh)
+	if(const USkeletalMesh* MySkeletalMesh = GetSkeletalMeshAsset())
 	{
 		if(MySkeletalMesh->FindSocket(TEXT("Muzzle")))
 		{
-			OutMuzzleLocation =	GetSocketLocation(TEXT("Muzzle"));
+			MuzzleLocation =	GetSocketLocation(TEXT("Muzzle"));
 		}
 	}
 }
 
 // 화면의 중앙의 월드 좌표와 방향을 가져온다 
-bool UTP_WeaponComponent::GetCrossHairLocation(APlayerController* MyPlayerController, FVector& WorldLocation, FVector& WorldDirection) const
+bool UTP_WeaponComponent::GetCrossHairLocation(const APlayerController* PlayerController, FVector& WorldLocation, FVector& WorldDirection) const
 {	
-	if(MyPlayerController != nullptr)
+	if(PlayerController != nullptr)
 	{
 		FVector2D Viewport;
 		GetWorld()->GetGameViewport()->GetViewportSize(Viewport);
-		return MyPlayerController->DeprojectScreenPositionToWorld(Viewport.X * 0.5f, Viewport.Y * 0.5f, WorldLocation, WorldDirection);
+		PlayerController->DeprojectScreenPositionToWorld(Viewport.X * 0.5f, Viewport.Y * 0.5f, WorldLocation, WorldDirection);
+		return true;
 	}
 	return false;
 }
+
+// void UTP_WeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+// {
+// 	if (Character == nullptr)
+// 	{
+// 		return;
+// 	}
+//
+// 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
+// 	{
+// 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+// 		{
+// 			Subsystem->RemoveMappingContext(FireMappingContext);
+// 		}
+// 	}
+// }
 
