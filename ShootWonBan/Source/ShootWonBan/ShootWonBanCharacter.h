@@ -98,7 +98,8 @@ protected:
 	UCurveFloat* AimCurve = nullptr;
 	
 	FTimeline AimTimeline;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ammo")
 	int32 AmmoCount = 0;
 
 	bool bHasWeapon;

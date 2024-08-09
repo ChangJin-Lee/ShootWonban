@@ -67,7 +67,6 @@ void AShootWonBanCharacter::BeginPlay()
 	{
 		if(AShootWonBanPlayerController* ShootWonBanPlayerController = Cast<AShootWonBanPlayerController>(PlayerController))
 		{
-			ShootWonBanPlayerController->SaveHighScore(8);
 			ShootWonBanPlayerController->SetCurrentStageWonbanCount();
 			AmmoCount = ShootWonBanPlayerController->StageClearScore;
 		}
