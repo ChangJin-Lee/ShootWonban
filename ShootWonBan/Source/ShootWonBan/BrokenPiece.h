@@ -23,6 +23,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, Category="Wonban")
+	USceneComponent* PieceSceneComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Piece")
 	UStaticMeshComponent* BrokenPieceMesh;
 };

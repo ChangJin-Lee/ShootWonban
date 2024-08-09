@@ -9,6 +9,9 @@ ABrokenPiece::ABrokenPiece()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	PieceSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("PieceSceneComponent"));
+	SetRootComponent(PieceSceneComponent);
+
 	BrokenPieceMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BrokenPieceMesh"));
 	BrokenPieceMesh->SetupAttachment(RootComponent);
 
@@ -18,8 +21,6 @@ ABrokenPiece::ABrokenPiece()
 	{
 		BrokenPieceMesh->SetStaticMesh(ObjectFinder.Object);
 	}
-	
-	BrokenPieceMesh->SetWorldScale3D(FVector(0.2f,0.2f,0.04f));
 
 	BrokenPieceMesh->SetSimulatePhysics(true);
 }
