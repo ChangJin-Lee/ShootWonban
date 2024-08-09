@@ -12,7 +12,7 @@ ABrokenPiece::ABrokenPiece()
 	BrokenPieceMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BrokenPieceMesh"));
 	BrokenPieceMesh->SetupAttachment(RootComponent);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ObjectFinder(TEXT("/Script/Engine.StaticMesh'/Game/FPWeapon/Mesh/FirstPersonProjectileMesh.FirstPersonProjectileMesh'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ObjectFinder(TEXT("/Script/Engine.StaticMesh'/Game/WonbanMesh.WonbanMesh'"));
 
 	if(ObjectFinder.Succeeded())
 	{
