@@ -119,5 +119,15 @@ public:
 	
 	void SetAmmo(int32 Value) { AmmoCount = Value; };
 	int32 GetAmmo() const { return AmmoCount; }
+
+
+	// Sound
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundBase* PickUpSound;
+
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundBase* ChangeWeaponSound;
+
+	void PlaySound(USoundBase* Sound);
 };
 

@@ -176,6 +176,8 @@ void AShootWonBanCharacter::SwitchWeapon1()
 
 	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
 	CurrentWeapon = Weapons[WeaponIndex];
+
+	PlaySound(ChangeWeaponSound);
 }
 
 void AShootWonBanCharacter::SwitchWeapon2()
@@ -191,6 +193,8 @@ void AShootWonBanCharacter::SwitchWeapon2()
 
 	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
 	CurrentWeapon = Weapons[WeaponIndex];
+
+	PlaySound(ChangeWeaponSound);
 }
 
 
@@ -199,6 +203,8 @@ void AShootWonBanCharacter::PickUpWeapon(ABaseWeapon* Weapon)
 	if(Weapon)
 	{
 		Weapons.Add(Weapon);
+
+		PlaySound(PickUpSound);
 		
 		if(bHasWeapon)
 		{
@@ -217,4 +223,9 @@ void AShootWonBanCharacter::PickUpWeapon(ABaseWeapon* Weapon)
 			}
 		}
 	}
+}
+
+void AShootWonBanCharacter::PlaySound(USoundBase* Sound)
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation(), 0.7f);
 }
