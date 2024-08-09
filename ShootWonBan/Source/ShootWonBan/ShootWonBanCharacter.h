@@ -102,9 +102,6 @@ protected:
 	void FireWeapon();
 	void SwitchWeapon1();
 	void SwitchWeapon2();
-
-	UFUNCTION()
-	void UpdateZoom(float Value);
 	
 	int32 WeaponIndex = 0;
 	
@@ -116,6 +113,9 @@ public:
 
 	UFUNCTION()
 	void PickUpWeapon(ABaseWeapon* InWeapon);
+
+	UFUNCTION()
+	void UpdateZoom(float Value);
 	
 	void SetAmmo(int32 Value) { AmmoCount = Value; };
 	int32 GetAmmo() const { return AmmoCount; }

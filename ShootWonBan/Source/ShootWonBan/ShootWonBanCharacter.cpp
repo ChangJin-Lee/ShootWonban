@@ -58,10 +58,6 @@ void AShootWonBanCharacter::BeginPlay()
 		AimTimeline.AddInterpFloat(AimCurve, OnTimelineFloat);
 		AimTimeline.SetLooping(false);
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Aim Curve!"));
-	}
 	
 	bHasWeapon = false;
 	
@@ -73,8 +69,6 @@ void AShootWonBanCharacter::BeginPlay()
 			ShootWonBanPlayerController->SetCurrentStageWonbanCount();
 		}
 	}
-
-	AmmoCount = 99;
 }
 
 void AShootWonBanCharacter::Tick(float DeltaTime)
@@ -146,52 +140,26 @@ void AShootWonBanCharacter::Look(const FInputActionValue& Value)
 void AShootWonBanCharacter::Aim()
 {
 	AimTimeline.Play();
-	
-	if (AimTimeline.IsPlaying())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Aim started"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AimTimeline not started"));
-	}
-	
 }
 
 void AShootWonBanCharacter::CancelAim()
 {
 	AimTimeline.Reverse();
-	
-	if (AimTimeline.IsPlaying())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("cancel aim started"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AimTimeline not started"));
-	}
 }
 
 void AShootWonBanCharacter::UpdateZoom(float Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UpdateZoom called with Value: %f"), Value);
-
-	
 	float TargetFOV = FMath::Lerp(DefaultFOV, ZoomedFOV, Value);
 	FirstPersonCameraComponent->SetFieldOfView(TargetFOV);
-	UE_LOG(LogTemp, Warning, TEXT("UpdateZoom called: Value = %f, DefaultFOV = %f, ZoomedFOV = %f, TargetFOV = %f"), 
-	Value, DefaultFOV, ZoomedFOV, TargetFOV);
 }
 
 void AShootWonBanCharacter::FireWeapon()
 {
 	if(CurrentWeapon == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("No current weapon!"));
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Fire!"));
 	CurrentWeapon->Fire(AmmoCount);
 }
 
@@ -203,9 +171,8 @@ void AShootWonBanCharacter::SwitchWeapon1()
 	}
 	
 	Weapons[WeaponIndex]->SetActorHiddenInGame(true);
-
 	int32 WeaponsCount = Weapons.Num();
-	WeaponIndex = (WeaponIndex + 1) % WeaponsCount; 
+	WeaponIndex = (WeaponIndex - 1 + WeaponsCount) % WeaponsCount; 
 
 	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
 	CurrentWeapon = Weapons[WeaponIndex];
@@ -219,9 +186,8 @@ void AShootWonBanCharacter::SwitchWeapon2()
 	}
 	
 	Weapons[WeaponIndex]->SetActorHiddenInGame(true);
-
 	int32 WeaponsCount = Weapons.Num();
-	WeaponIndex = (WeaponIndex - 1 + WeaponsCount) % WeaponsCount; 
+	WeaponIndex = (WeaponIndex + 1) % WeaponsCount; 
 
 	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
 	CurrentWeapon = Weapons[WeaponIndex];

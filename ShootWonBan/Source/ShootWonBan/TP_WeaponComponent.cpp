@@ -22,7 +22,6 @@ void UTP_WeaponComponent::Fire()
 	// Try and fire a projectile
 	if (ProjectileClass != nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Fire!"));
 		GetMuzzleLocation();
 		
 		UWorld* const World = GetWorld();
@@ -42,18 +41,8 @@ void UTP_WeaponComponent::Fire()
 		
 				// Spawn the projectile at the muzzle
 				World->SpawnActor<AShootWonBanProjectile>(ProjectileClass, MuzzleLocation, ProjectileRotation, ActorSpawnParams);
-
-				UE_LOG(LogTemp, Error, TEXT("Muzzle Location: %s"), *MuzzleLocation.ToString());
 			}
 		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("No Controller !"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("No projectile!"));
 	}
 }
 
