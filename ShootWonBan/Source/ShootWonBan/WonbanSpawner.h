@@ -36,6 +36,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	float WonbanScale = 0.5f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	float WonbanSpeed = 10.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	float WonbanRotationFrequency = 20.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	float WonbanRotationPower = 5.0f;
@@ -48,6 +50,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	float WonbanTargetLocationDistance = 1000.0f;
 	
+	
+	void ChangeSpeed(float time);
+
+	//Sound
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundBase* WonbanCreatingSound;
+	
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundBase* WonbanShootingSound;
+
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundBase* WonbanDestroySound;
+
+	void PlaySound(USoundBase* Sound);
 	
 private:
 	FTimerHandle TimerHandle;
