@@ -66,11 +66,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
 
-	/** Aim Input Action */
+	/** WeaponSlot1 Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* WeaponSlot1;
+	
+	/** WeaponSlot2 Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* WeaponSlot2;
+
+	/** WeaponSwitching1 Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SwitchWeaponAction1;
 	
-	/** Aim Input Action */
+	/** WeaponSwitching2 Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SwitchWeaponAction2;
 	
@@ -100,10 +108,13 @@ protected:
 	void Aim();
 	void CancelAim();
 	void FireWeapon();
+	void GetWeaponSlot1();
+	void GetWeaponSlot2();
 	void SwitchWeapon1();
 	void SwitchWeapon2();
+	void ChangeWeaponState(int32 CurrentWeapon, int32 NewWeapon);
 	
-	int32 WeaponIndex = 0;
+	int32 CurrentWeaponIndex = 0;
 	
 public:
 	/** Returns Mesh1P subobject **/

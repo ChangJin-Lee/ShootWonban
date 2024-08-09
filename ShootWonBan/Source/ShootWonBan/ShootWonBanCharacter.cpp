@@ -47,6 +47,8 @@ void AShootWonBanCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	
 	
 	// set Default FOV
 	DefaultFOV = FirstPersonCameraComponent->FieldOfView;
@@ -67,6 +69,7 @@ void AShootWonBanCharacter::BeginPlay()
 		{
 			ShootWonBanPlayerController->SaveHighScore(8);
 			ShootWonBanPlayerController->SetCurrentStageWonbanCount();
+			AmmoCount = ShootWonBanPlayerController->StageClearScore;
 		}
 	}
 }
@@ -102,6 +105,11 @@ void AShootWonBanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShootWonBanCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootWonBanCharacter::CancelAim);
 
+		// Change Weapon Slot 
+		EnhancedInputComponent->BindAction(WeaponSlot1, ETriggerEvent::Started, this, &AShootWonBanCharacter::GetWeaponSlot1);
+		EnhancedInputComponent->BindAction(WeaponSlot2, ETriggerEvent::Started, this, &AShootWonBanCharacter::GetWeaponSlot2);
+		
+		// Switching Weapon 
 		EnhancedInputComponent->BindAction(SwitchWeaponAction1, ETriggerEvent::Started, this, &AShootWonBanCharacter::SwitchWeapon1);
 		EnhancedInputComponent->BindAction(SwitchWeaponAction2, ETriggerEvent::Started, this, &AShootWonBanCharacter::SwitchWeapon2);
 	}
@@ -161,6 +169,33 @@ void AShootWonBanCharacter::FireWeapon()
 	}
 
 	CurrentWeapon->Fire(AmmoCount);
+	
+	if(AmmoCount > 0)
+	{
+		AmmoCount--;
+	}
+}
+
+void AShootWonBanCharacter::GetWeaponSlot1()
+{
+	if(CurrentWeaponIndex == 0)
+	{
+		return;	
+	}	
+	
+	int32 NewWeaponSlotIndex = 0;
+	ChangeWeaponState(CurrentWeaponIndex, NewWeaponSlotIndex);
+}
+
+void AShootWonBanCharacter::GetWeaponSlot2()
+{
+	if(CurrentWeaponIndex == 1 || Weapons.Num() < 2)
+	{
+		return;	
+	}
+	
+	int32 NewWeaponSlotIndex = 1;
+	ChangeWeaponState(CurrentWeaponIndex, NewWeaponSlotIndex);
 }
 
 void AShootWonBanCharacter::SwitchWeapon1()
@@ -170,14 +205,8 @@ void AShootWonBanCharacter::SwitchWeapon1()
 		return;
 	}
 	
-	Weapons[WeaponIndex]->SetActorHiddenInGame(true);
-	int32 WeaponsCount = Weapons.Num();
-	WeaponIndex = (WeaponIndex - 1 + WeaponsCount) % WeaponsCount; 
-
-	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
-	CurrentWeapon = Weapons[WeaponIndex];
-
-	PlaySound(ChangeWeaponSound);
+	int32 NewWeaponIndex = (CurrentWeaponIndex - 1 + Weapons.Num()) % Weapons.Num();
+	ChangeWeaponState(CurrentWeaponIndex, NewWeaponIndex);
 }
 
 void AShootWonBanCharacter::SwitchWeapon2()
@@ -187,14 +216,21 @@ void AShootWonBanCharacter::SwitchWeapon2()
 		return;
 	}
 	
-	Weapons[WeaponIndex]->SetActorHiddenInGame(true);
-	int32 WeaponsCount = Weapons.Num();
-	WeaponIndex = (WeaponIndex + 1) % WeaponsCount; 
+	int32 NewWeaponIndex = (CurrentWeaponIndex + 1) %  Weapons.Num(); 
+	ChangeWeaponState(CurrentWeaponIndex, NewWeaponIndex);
+}
 
-	Weapons[WeaponIndex]->SetActorHiddenInGame(false);
-	CurrentWeapon = Weapons[WeaponIndex];
-
-	PlaySound(ChangeWeaponSound);
+void AShootWonBanCharacter::ChangeWeaponState(int32 CurrentIndex, int32 NewIndex)
+{
+	if(CurrentWeapon == nullptr)
+	{
+		return;
+	}
+	
+	Weapons[CurrentIndex]->SetActorHiddenInGame(true);
+	Weapons[NewIndex]->SetActorHiddenInGame(false);
+	CurrentWeapon = Weapons[NewIndex];
+	CurrentWeaponIndex = NewIndex;
 }
 
 
@@ -213,7 +249,7 @@ void AShootWonBanCharacter::PickUpWeapon(ABaseWeapon* Weapon)
 		else
 		{
 			bHasWeapon = true;
-			WeaponIndex = 0;
+			CurrentWeaponIndex = 0;
 			CurrentWeapon = Weapon;
 
 			UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
