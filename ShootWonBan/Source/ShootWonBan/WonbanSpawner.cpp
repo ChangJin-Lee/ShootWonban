@@ -3,6 +3,7 @@
 
 #include "WonbanSpawner.h"
 
+#include "ShootWonBanPlayerController.h"
 #include "TimerManager.h"
 #include "Wonban.h"
 #include "Engine/World.h"
@@ -54,6 +55,17 @@ void AWonbanSpawner::BeginPlay()
 	{
 		PlaySound(WonbanShootingSound);  // 사운드를 재생
 	}, 3.0f, true, 2.7f);
+	
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	if(PlayerController)
+	{
+		AShootWonBanPlayerController* ShootWonBanPC = Cast<AShootWonBanPlayerController>(PlayerController);
+		if(ShootWonBanPC)
+		{
+			ShootWonBanPlayerController = ShootWonBanPC;
+		}
+	}
 }
 
 void AWonbanSpawner::SpawnWonban()
@@ -63,19 +75,33 @@ void AWonbanSpawner::SpawnWonban()
 	FActorSpawnParameters SpawnParameters;
 	
 	AWonban* SpawnedWonban = GetWorld()->SpawnActor<AWonban>(AWonban::StaticClass(), SpawnLocation, SpawnRotation, SpawnParameters);
-
-	if(SpawnedWonban)
+	
+	if(ShootWonBanPlayerController->StageClearScore - ShootWonBanPlayerController->CurrentWonbanCount > 0)
 	{
-		SpawnedWonban->SetActorScale3D(FVector(WonbanScale, WonbanScale, WonbanScale/5));
-		SpawnedWonban->RotationFrequency = FMath::RandRange(WonbanRotationFrequency * 0.8, WonbanRotationFrequency * 1.2);
-		SpawnedWonban->RotationPower = FMath::RandRange(WonbanRotationPower * 0.8, WonbanRotationPower * 1.2);
-		SpawnedWonban->ParabolaHeight = FMath::RandRange(WonbanParabolaHeight * 0.8, WonbanParabolaHeight * 1.2);
-		SpawnedWonban->ThrowDirection = FVector(FMath::RandRange(WonbanThrowDirectionX.X, WonbanThrowDirectionX.Y),FMath::RandRange(WonbanThrowDirectionY.X, WonbanThrowDirectionY.Y),0.0f).GetSafeNormal();
-		SpawnedWonban->TargetLocation = SpawnedWonban->ThrowDirection * WonbanTargetLocationDistance;
-		SpawnedWonban->WonbanDestroySound = WonbanDestroySound;
-		ChangeSpeed(10.0f / WonbanSpeed);
-		SpawnedWonban->InitializeThrow(ThrowCurve);
-		SpawnedWonban->SetLifeSpan(60);
+		if(SpawnedWonban)
+		{
+			ShootWonBanPlayerController->CurrentWonbanCount++;
+					
+			SpawnedWonban->SetActorScale3D(FVector(WonbanScale, WonbanScale, WonbanScale/5));
+			SpawnedWonban->RotationFrequency = FMath::RandRange(WonbanRotationFrequency * 0.8, WonbanRotationFrequency * 1.2);
+			SpawnedWonban->RotationPower = FMath::RandRange(WonbanRotationPower * 0.8, WonbanRotationPower * 1.2);
+			SpawnedWonban->ParabolaHeight = FMath::RandRange(WonbanParabolaHeight * 0.8, WonbanParabolaHeight * 1.2);
+			SpawnedWonban->ThrowDirection = FVector(FMath::RandRange(WonbanThrowDirectionX.X, WonbanThrowDirectionX.Y),FMath::RandRange(WonbanThrowDirectionY.X, WonbanThrowDirectionY.Y),0.0f).GetSafeNormal();
+			SpawnedWonban->TargetLocation = SpawnedWonban->ThrowDirection * WonbanTargetLocationDistance;
+			SpawnedWonban->WonbanDestroySound = WonbanDestroySound;
+			SpawnedWonban->PeiceCount = PeiceCount;
+			SpawnedWonban->PeicePower = PeicePower;
+			ChangeSpeed(10.0f / WonbanSpeed);
+			SpawnedWonban->InitializeThrow(ThrowCurve);
+			SpawnedWonban->SetLifeSpan(60);
+		}
+	}
+	else
+	{
+		ShootWonBanPlayerController->DestoryHUD();
+		ShootWonBanPlayerController->CreateGameOverWidget();
+		ShootWonBanPlayerController->SaveHighScore(ShootWonBanPlayerController->CurrentScore);
+		Destroy();
 	}
 }
 
@@ -88,7 +114,10 @@ void AWonbanSpawner::Tick(float DeltaTime)
 
 void AWonbanSpawner::PlaySound(USoundBase* Sound)
 {
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation(), 0.8f);
+	if(ShootWonBanPlayerController->StageClearScore - ShootWonBanPlayerController->CurrentWonbanCount > 0)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation(), 0.8f);
+	}
 }
 
 void AWonbanSpawner::ChangeSpeed(float time)

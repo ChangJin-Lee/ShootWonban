@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "WonbanSpawner.generated.h"
 
+class AShootWonBanPlayerController;
+
 UCLASS()
 class SHOOTWONBAN_API AWonbanSpawner : public AActor
 {
@@ -34,7 +36,7 @@ public:
 	UCurveFloat* ThrowCurve;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
-	float WonbanScale = 0.5f;
+	float WonbanScale = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	float WonbanSpeed = 10.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
@@ -49,6 +51,11 @@ public:
 	FVector WonbanThrowDirectionY = FVector(-1.0f, 1.0f, 0);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	float WonbanTargetLocationDistance = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	int32 PeiceCount = 7;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
+	float PeicePower = 2000;
 	
 	
 	void ChangeSpeed(float time);
@@ -71,4 +78,6 @@ private:
 	void SpawnWonban();
 
 	TSubclassOf<AWonban> WonbanActor;
+	
+	AShootWonBanPlayerController* ShootWonBanPlayerController;
 };
