@@ -19,32 +19,7 @@ void AShootWonBanPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(InputMappingContext, 0);
 	}
 	
-	if(HUDWidgetClass != nullptr)
-	{
-		HUDWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
-	
-		if(HUDWidget != nullptr)
-		{
-			UWorld* World = GetWorld();
-			if(World)
-			{
-				FString FullMapName = World->GetMapName();
-				FString ShortMapName = FullMapName;
-
-				// 접두사 제거
-				const FString Prefix = World->StreamingLevelsPrefix;
-				if (FullMapName.StartsWith(Prefix))
-				{
-					ShortMapName = FullMapName.RightChop(Prefix.Len());
-				}
-				
-				if(ShortMapName != FString("MainMenu"))
-				{
-					HUDWidget -> AddToViewport();
-				}
-			}
-		}
-	}
+	HUDWidget = CreateUIWidget(HUDWidgetClass);
 
 	if (!UGameplayStatics::DoesSaveGameExist(TEXT("WonbanStageScoreSlot"), 0))
 	{
@@ -56,7 +31,26 @@ void AShootWonBanPlayerController::BeginPlay()
 			UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("WonbanStageScoreSlot"), 0);
 		}
 	}
+
+	CurrentScore = 0;
+	CurrentWonbanCount = 0;
 }
+
+UUserWidget* AShootWonBanPlayerController::CreateUIWidget(TSubclassOf<UUserWidget> WidgetClass)
+{
+	if(WidgetClass)
+	{
+		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
+
+		if(Widget && GetCurrentStageName() != FString("MainMenu"))
+		{
+			Widget->AddToViewport();
+			return Widget;
+		}
+	}
+	return nullptr;
+}
+
 
 void AShootWonBanPlayerController::SaveHighScore(int32 Score)
 {
@@ -121,10 +115,65 @@ void AShootWonBanPlayerController::SetCurrentStageWonbanCount()
 				{
 					StageClearScore = WonbanSaveGame->StageClearScore[2];
 				}
-				
-				UE_LOG(LogTemp, Warning, TEXT("StageClearScore %d"), StageClearScore);
-
 			}
 		}
+	}
+}
+
+void AShootWonBanPlayerController::DestoryHUD()
+{
+	HUDWidget->RemoveFromViewport();
+}
+
+void AShootWonBanPlayerController::CreateGameOverWidget()
+{
+	GameOverWidget = CreateUIWidget(GameOverWidgetClass);
+	
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	
+	if (PlayerController)
+	{
+		FInputModeUIOnly InputMode;
+		PlayerController->SetInputMode(InputMode);
+		PlayerController->bShowMouseCursor = true;
+	}
+}
+
+FString AShootWonBanPlayerController::GetCurrentStageName()
+{
+	UWorld* World = GetWorld();
+	if(World)
+	{
+		FString FullMapName = World->GetMapName();
+		FString ShortMapName = FullMapName;
+
+		// 접두사 제거
+		const FString Prefix = World->StreamingLevelsPrefix;
+		if (FullMapName.StartsWith(Prefix))
+		{
+			ShortMapName = FullMapName.RightChop(Prefix.Len());
+		}
+				
+		return ShortMapName;
+	}
+
+	return "";
+}
+
+FString AShootWonBanPlayerController::OpenNextStage()
+{
+	FString StageName = GetCurrentStageName();
+	
+	if(StageName == FString("Stage1"))
+	{
+		return FString("Stage2");
+	}
+	else if(StageName == FString("Stage2"))
+	{
+		return FString("Stage3");
+	}
+	else 
+	{
+		return "";
 	}
 }

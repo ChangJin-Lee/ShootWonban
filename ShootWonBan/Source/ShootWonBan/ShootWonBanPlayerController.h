@@ -35,11 +35,19 @@ private:
 	UPROPERTY()
 	UUserWidget* HUDWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+	
+	UPROPERTY()
+	UUserWidget* GameOverWidget;
 
 public:
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 CurrentScore;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 CurrentWonbanCount;
 	
 	UPROPERTY(BlueprintReadWrite)
 	int32 StageClearScore;
@@ -52,4 +60,16 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	int32 LoadHighScore();
+
+	UFUNCTION(BlueprintCallable)
+	void DestoryHUD();
+
+	UFUNCTION(BlueprintCallable)
+	FString GetCurrentStageName();
+
+	UUserWidget* CreateUIWidget(TSubclassOf<UUserWidget> WidgetClass);
+	void CreateGameOverWidget();
+
+	UFUNCTION(BlueprintCallable)
+	FString OpenNextStage();
 };
