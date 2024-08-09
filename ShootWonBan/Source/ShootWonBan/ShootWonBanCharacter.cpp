@@ -48,6 +48,9 @@ void AShootWonBanCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	
+	// 테스트를 위한 임시 총알 개수 지정
+	AmmoCount = 99;
+	
 	// set Default FOV
 	DefaultFOV = FirstPersonCameraComponent->FieldOfView;
 
