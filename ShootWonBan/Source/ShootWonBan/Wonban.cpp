@@ -6,6 +6,7 @@
 #include "BrokenPiece.h"
 #include "ShootWonBanProjectile.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
 // Sets default values
@@ -89,6 +90,7 @@ void AWonban::OnCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	{
 		SpawnBrokenPieces();
 		Destroy();
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), WonbanDestroySound, GetActorLocation());
 	}
 }
 

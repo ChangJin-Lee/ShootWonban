@@ -36,6 +36,10 @@ public:
 	float ParabolaHeight;
 	FVector ThrowDirection;
 	FVector TargetLocation;
+
+	//Sound
+	UPROPERTY(EditAnywhere, Category="Sound")
+	USoundBase* WonbanDestroySound;
 	
 private:
 	FVector InitialLocation;
