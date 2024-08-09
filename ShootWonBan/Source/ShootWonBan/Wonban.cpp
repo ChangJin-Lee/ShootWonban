@@ -4,6 +4,7 @@
 #include "Wonban.h"
 
 #include "BrokenPiece.h"
+#include "ShootWonBanPlayerController.h"
 #include "ShootWonBanProjectile.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,6 +15,9 @@ AWonban::AWonban()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	WonbanSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("WonbanSceneComponent"));
+	SetRootComponent(WonbanSceneComponent);
 
 	WonbanMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WonbanMeshComponent"));
 	WonbanMeshComponent->SetupAttachment(RootComponent);
@@ -91,12 +95,23 @@ void AWonban::OnCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		SpawnBrokenPieces();
 		Destroy();
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), WonbanDestroySound, GetActorLocation());
+
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+		if(PlayerController)
+		{
+			AShootWonBanPlayerController* ShootWonBanPlayerController = Cast<AShootWonBanPlayerController>(PlayerController);
+			if(ShootWonBanPlayerController)
+			{
+				ShootWonBanPlayerController->CurrentScore++;
+			}
+		}
 	}
 }
 
 void AWonban::SpawnBrokenPieces()
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < PeiceCount; i++)
 	{
 		FVector SpawnLocation = GetActorLocation();
 		FRotator SpawnRotation = FRotator::ZeroRotator;
@@ -110,7 +125,8 @@ void AWonban::SpawnBrokenPieces()
 				if (MeshComponent)
 				{
 					FVector ImpulseDirection = FVector(FMath::FRandRange(-1.0f, 1.0f), FMath::FRandRange(-1.0f, 1.0f), FMath::FRandRange(0.5f, 1.5f));
-					MeshComponent->AddImpulse(ImpulseDirection * 500.0f);
+					MeshComponent->SetWorldScale3D(GetActorScale3D()/4);
+					MeshComponent->AddImpulse(ImpulseDirection * PeicePower);
 				}
 				BrokenPiece->SetLifeSpan(5.0f);
 			}

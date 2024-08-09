@@ -26,6 +26,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Category="Wonban")
+	USceneComponent* WonbanSceneComponent;
+
+	UPROPERTY(EditAnywhere, Category="Wonban")
 	UStaticMeshComponent* WonbanMeshComponent;
 
 	void InitializeThrow(UCurveFloat* Curve);
@@ -36,6 +39,8 @@ public:
 	float ParabolaHeight;
 	FVector ThrowDirection;
 	FVector TargetLocation;
+	int32 PeiceCount;
+	float PeicePower;
 
 	//Sound
 	UPROPERTY(EditAnywhere, Category="Sound")
