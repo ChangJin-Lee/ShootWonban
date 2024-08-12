@@ -50,7 +50,7 @@ public:
 	int32 CurrentWonbanCount;
 	
 	UPROPERTY(BlueprintReadWrite)
-	int32 StageClearScore;
+	int32 StageClearScore = 1000;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentStageWonbanCount();
