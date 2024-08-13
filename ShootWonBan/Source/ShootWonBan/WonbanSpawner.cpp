@@ -82,7 +82,7 @@ void AWonbanSpawner::SpawnWonban()
 		{
 			ShootWonBanPlayerController->CurrentWonbanCount++;
 					
-			SpawnedWonban->SetActorScale3D(FVector(WonbanScale, WonbanScale, WonbanScale/5));
+			SpawnedWonban->SetActorScale3D(FVector(WonbanScale, WonbanScale, WonbanScale));
 			SpawnedWonban->RotationFrequency = FMath::RandRange(WonbanRotationFrequency * 0.8, WonbanRotationFrequency * 1.2);
 			SpawnedWonban->RotationPower = FMath::RandRange(WonbanRotationPower * 0.8, WonbanRotationPower * 1.2);
 			SpawnedWonban->ParabolaHeight = FMath::RandRange(WonbanParabolaHeight * 0.8, WonbanParabolaHeight * 1.2);
