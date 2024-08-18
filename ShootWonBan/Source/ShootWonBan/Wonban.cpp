@@ -94,7 +94,11 @@ void AWonban::OnCollision(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	{
 		SpawnBrokenPieces();
 		Destroy();
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), WonbanDestroySound, GetActorLocation());
+
+		if(WonbanDestroySound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), WonbanDestroySound, GetActorLocation());
+		}
 
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 

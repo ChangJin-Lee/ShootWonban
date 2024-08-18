@@ -22,9 +22,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Wonban")
 	FVector SpawnLocation;
@@ -74,10 +74,13 @@ public:
 	
 private:
 	FTimerHandle TimerHandle;
-
+	FTimerHandle SoundTimerHandle;
+	FTimerHandle SoundTimerHandle2;
+	
 	void SpawnWonban();
 
 	TSubclassOf<AWonban> WonbanActor;
-	
+
+	UPROPERTY()
 	AShootWonBanPlayerController* ShootWonBanPlayerController;
 };
